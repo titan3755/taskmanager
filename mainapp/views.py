@@ -15,8 +15,11 @@ def home(request, *args, **kwargs):
             email = request.user.email
         else:
             email = 'example@gmail.com'
-    g = Gravatar(email)
-    gravatar_url = g.get_image()
+        g = Gravatar(email)
+        gravatar_url = g.get_image()
+    else:
+        gravatar_url = ''
+
     context = {'title': 'Home', 'avatar': gravatar_url}
     return render(request, 'mainapp/home.html', context)
 
