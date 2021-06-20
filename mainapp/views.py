@@ -1,5 +1,6 @@
 import datetime
 import time as t
+from libgravatar import Gravatar
 from django.shortcuts import render, redirect
 from .forms import CreateUserForm, UserUpdateForm
 from django.contrib import messages
@@ -9,7 +10,13 @@ from .models import Todo
 
 # Create your views here.
 def home(request, *args, **kwargs):
-    context = {'title': 'Home',}
+    if request.user.email:
+        email = request.user.email
+    else:
+        email = 'example@gmail.com'
+    g = Gravatar(email)
+    gravatar_url = g.get_image()
+    context = {'title': 'Home', 'avatar': gravatar_url}
     return render(request, 'mainapp/home.html', context)
 
 def signup(request, *args, **kwargs):
@@ -51,7 +58,13 @@ def logoutuser(request, *args, **kwargs):
 
 @login_required(login_url='/login')
 def dashboard(request, *args, **kwargs):
-    context = {'title': 'Dashboard', 'main_data': False}
+    if request.user.email:
+        email = request.user.email
+    else:
+        email = 'example@gmail.com'
+    g = Gravatar(email)
+    gravatar_url = g.get_image()
+    context = {'title': 'Dashboard', 'avatar': gravatar_url, 'main_data': False}
     if request.method == 'POST':
         title = request.POST['title']
         description = request.POST['desc']
@@ -68,6 +81,12 @@ def dashboard(request, *args, **kwargs):
 
 @login_required(login_url='/login')
 def editprofile(request, *args, **kwargs):
+    if request.user.email:
+        email = request.user.email
+    else:
+        email = 'example@gmail.com'
+    g = Gravatar(email)
+    gravatar_url = g.get_image()
     u_form = UserUpdateForm()
     if request.method == 'POST':
         main = Todo.objects.filter(user=request.user.username)
@@ -79,11 +98,17 @@ def editprofile(request, *args, **kwargs):
             messages.success(request, 'Your profile has been updated!')
         else:
             messages.error(request, 'Invalid update credentials!')
-    context = {'title': 'Edit Profile', 'form': u_form}
+    context = {'title': 'Edit Profile', 'avatar': gravatar_url, 'form': u_form}
     return render(request, 'mainapp/editprofile.html', context)
 
 @login_required(login_url='/login')
 def taskedit(request, *args, **kwargs):
+    if request.user.email:
+        email = request.user.email
+    else:
+        email = 'example@gmail.com'
+    g = Gravatar(email)
+    gravatar_url = g.get_image()
     obj = Todo.objects.filter(user=request.user)
     date_year = datetime.datetime.now().year
     if datetime.datetime.now().month < 10:
@@ -95,7 +120,7 @@ def taskedit(request, *args, **kwargs):
     #Error code above
     
     main_date = str(datetime.date.today()).replace('-', ' ').split()
-    context = {'title': 'Edit and View Tasks', 'obj': obj, 'year': int(main_date[0]), 'month': int(main_date[1]), 'date': int(main_date[2])}
+    context = {'title': 'Edit and View Tasks', 'avatar': gravatar_url, 'obj': obj, 'year': int(main_date[0]), 'month': int(main_date[1]), 'date': int(main_date[2])}
     return render(request, 'mainapp/edit.html', context)
 
 @login_required(login_url='/login')
@@ -170,13 +195,19 @@ def task_mod(request, *args, **kwargs):
 
 @login_required(login_url='/login')
 def taskitem(request, *args, **kwargs):
+    if request.user.email:
+        email = request.user.email
+    else:
+        email = 'example@gmail.com'
+    g = Gravatar(email)
+    gravatar_url = g.get_image()
     kitem_id = kwargs['key']
     user_instance = Todo.objects.filter(user=request.user.username)
     try:
         data = user_instance.get(id=kitem_id)
     except Exception:
         return redirect('/task')
-    context = {'title': 'Task Details', 'data': data,}
+    context = {'title': 'Task Details', 'data': data, 'avatar': gravatar_url}
     return render(request, 'mainapp/items.html', context)
 
 @login_required(login_url='/login')

@@ -1,4 +1,4 @@
-{% load avatar_tags %}{% load static %}
+{% load static %}
 
 
 <nav class="sticky-top p-3 border-bottom bg-light header-main shadow p-3 bg-body rounded">
@@ -37,7 +37,7 @@
         <div class="dropdown text-end">
         <a href="" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
             {% if user.is_authenticated %}
-            {% avatar user 32 class="rounded-circle" %}
+            <img src="{{avatar}}" alt="gravatar" class="rounded-circle" width="32" height="32">
             {% else %}
             <img src="{% static 'mainapp/pic.svg' %}" alt="ina" width="32" height="32" class="rounded-circle">
             {% endif %}
