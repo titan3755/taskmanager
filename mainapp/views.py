@@ -10,7 +10,7 @@ from .models import Todo
 
 # Create your views here.
 def home(request, *args, **kwargs):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         if request.user.email:
             email = request.user.email
         else:
