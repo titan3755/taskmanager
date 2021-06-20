@@ -1,0 +1,375 @@
+{% load app_tags %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <title>{{title}}</title>
+    <style>
+        .main-btn {
+            background-color: rgb(197, 197, 197);
+        }
+        .main-btn:hover {
+            background-color: rgb(153, 153, 153);
+        }
+        .modal-body p {
+        word-wrap: break-word;
+        }
+        @media only screen and (max-width: 768px) {
+            .table-container table {
+                font-size: smaller;
+                
+            }
+        }
+    </style>
+</head>
+<body class="d-flex flex-column h-100">
+    {% include 'mainapp/navbar.html' %}
+    <div class="px-4 py-5 my-5 text-center">
+        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">
+            <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001zm-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708l-1.585-1.585z"/>
+        </svg>
+        <h1 class="display-5 mt-4 fw-bold">Edit and View tasks</h1>
+        <div class="col-lg-6 mx-auto">
+        <p class="fs-5 mb-4">Edit, manage and view your tasks here. You can edit task information or you can delete them. Use the tasks id for performing the operations. After editing or deleting a task, the page will automatically refresh. The status column of the view panel represents if the task has passed it's deadline or not by a tick or cross respectively.</p>
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+            <a class="btn btn-primary btn-lg px-4 gap-3" href="/dashboard">Add tasks</a>
+            <a class="btn btn-outline-secondary btn-lg px-4" href="/">Home</a>
+        </div>
+        </div>
+    </div>
+    <div class="container mt-2 mb-4 table-container">
+    <fieldset class="border border-dark p-5">
+        <div class="table-responsive-md">
+        <table class="table table-bordered">
+            <thead class="table-primary">
+            <tr>
+                <th class="text-center" scope="col">ID</th>
+                <th class="text-center" scope="col">Title</th>
+                <th class="text-center" scope="col">Category</th>
+                <th class="text-center" scope="col">Deadline</th>
+                <th class="text-center" scope="col">Description</th>
+                <th class="text-center" scope="col">Status</th>
+
+            </tr>
+            </thead>
+            <tbody>
+            {% for object in obj %}
+            <tr>
+                <th class="text-center" scope="row">{{object.id}}</th>
+                <td class="text-center">{{object.title}}</td>
+                {% if object.language != 'None' and object.category == 'Programming' or object.category == 'Web Development'%}
+                <td class="text-center">{{object.category}} <small>( {{object.language}} )</small> </td>
+                {% else %}
+                <td class="text-center">{{object.category}}</td>
+                {% endif %}
+                <td class="text-center">{{object.deadline}} at <b>{{object.time}}</b> <i>  BST</i></td>
+                <!-- {#% if object.deadline|replacestr|listify|listin:0|integer > year|integer and object.deadline|replacestr|listify|listin:1|integer > month|integer and object.deadline|replacestr|listify|listin:2|integer > date|integer %} -->
+                <td class="text-center"><button class="btn main-btn text-center" data-bs-toggle="modal" data-bs-target="#main-{{object.id}}-id">View</button></td>
+                {% if object.deadline|replacestr|listify|compare:object.time %}
+                <td class="text-center"><svg class="text-success" xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-check" viewBox="0 0 16 16">
+                    <path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z"/>
+                </svg></td>
+                {% else %}
+                <td class="text-center"><svg class="text-danger" xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                    <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                </svg></td>
+                {% endif %}
+                
+            </tr>
+            
+            <div class="modal fade" id="main-{{object.id}}-id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Task Description</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                    <h4 class="text-center">
+                        Description
+                    </h4>
+                    <hr>
+                    <p class="">{{object.description}}</p>
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                </div>
+            </div>
+            {% endfor %}
+            
+
+            </tbody>
+        </table>
+        </div>
+        <hr>
+        <fieldset class="border border-dark p-3 mt-2 mb-2">
+            
+            <legend>Delete Entry</legend>
+            <form action="/delete/" method="POST">{% csrf_token %}
+        <div class="input-group mb-3">
+            <input name="delete-input" type="text" class="form-control" placeholder="Input id to delete entry" aria-label="Delete" aria-describedby="button-addon1">
+            <button class="btn btn-primary" type="submit" id="button-addon1">Delete</button>
+        </form>
+        </div>
+    </fieldset>
+
+    <fieldset class="border border-dark p-3 mt-2 mb-2">
+        <legend>Edit Entry</legend>
+        <p class="text-muted fs-5">
+            Select the type of entry you want to edit in the select box below
+        </p>
+        <form action="/edit/" method="POST">{% csrf_token %}
+            <div class="container-fluid" id="main-cont">
+                <div class="row">
+                    <div class="col-sm">
+            <select class="form-select form-select-sm" id="main-select" aria-label=".form-select-sm example" name="select-edit">
+                <option selected>Nothing</option>
+                <option value="t">Title or Description</option>
+                <option value="c">Categories or Languages</option>
+                <option value="d">Time or Deadlines</option>
+            </select>
+            <div class="col-sm" id="main-shit">
+
+            </div>
+        </div>
+        </div>
+        </div>
+    </form>
+</fieldset>
+    </fieldset>
+</div>
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div class="toast border border-dark" id="SuperToasty" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <svg class="rounded me-2" xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-check2" viewBox="0 0 16 16">
+                <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
+            </svg>
+        <strong class="me-auto">Tasks Modified!</strong>
+        <small>Edit Task</small>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body" style="background-color: #ffffff;">
+        Your task has been modified successfully!
+        </div>
+    </div>
+</div>
+    {% include 'mainapp/footer.html' %}
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+    <script>
+        const home_link = document.getElementById('home-link')
+        const dashboard_link = document.getElementById('dashboard-link')
+        const task_link = document.getElementById('task-link')
+        const select_box = document.getElementById('main-select')
+        select_box.addEventListener('change', () => {
+
+            if(select_box.value === 't'){
+                // Declaration of Variables
+                const main_shit = document.getElementById('main-shit')
+                main_shit.innerHTML = ''
+                const main_div = document.createElement('div')
+                const input_desc = document.createElement('span')
+                const id_input_box = document.createElement('input')
+                const title_input_box = document.createElement('input')
+                const desc_input_box = document.createElement('input')
+                const submit_btn = document.createElement('button')
+                main_div.name = 'main-input-div'
+                main_div.classList.add('input-group', 'mb-4', 'mt-4')
+                input_desc.classList.add('input-group-text')
+                input_desc.innerText = 'Edit'
+                main_div.appendChild(input_desc)
+                // Customization
+                id_input_box.placeholder = 'Enter ID'
+                id_input_box.name = 'id-input'
+                id_input_box.type = 'number'
+                id_input_box.required = true
+                title_input_box.placeholder = 'Title'
+                title_input_box.name = 'title-input'
+                desc_input_box.placeholder = 'Description'
+                desc_input_box.name = 'desc-input'
+                submit_btn.innerText = 'Submit'
+                submit_btn.type = 'submit'
+                // Adding to Classlist
+                submit_btn.classList.add('btn', 'btn-primary')
+                id_input_box.classList.add('form-control')
+                title_input_box.classList.add('form-control')
+                desc_input_box.classList.add('form-control')
+                // Appending Children
+                main_div.appendChild(id_input_box)
+                main_div.appendChild(title_input_box)
+                main_div.appendChild(desc_input_box)
+                main_div.appendChild(submit_btn)
+                main_shit.appendChild(main_div)
+
+
+            }
+            else if(select_box.value === 'c'){
+                // Declaration of Variables
+                const main_shit = document.getElementById('main-shit')
+                main_shit.innerHTML = ''
+                const id_input_box = document.createElement('input')
+                const main_select_box = document.createElement('select')
+                const lang_select_box = document.createElement('select')
+                const default_option = document.createElement('option')
+                const option_1 = document.createElement('option')
+                const option_2 = document.createElement('option')
+                const option_3 = document.createElement('option')
+                const option_4 = document.createElement('option')
+                const option_5 = document.createElement('option')
+                const default_option_lang = document.createElement('option')
+                const option_1_lang = document.createElement('option')
+                const option_2_lang = document.createElement('option')
+                const option_3_lang = document.createElement('option')
+                const option_4_lang = document.createElement('option')
+                const option_5_lang = document.createElement('option')
+                const option_6_lang = document.createElement('option')
+                const option_7_lang = document.createElement('option')
+                // Option Customizations
+                default_option.innerText = 'Edit Category *'
+                default_option.selected = true
+                default_option.classList.add('text-muted')
+                option_1.innerText = 'Web Development'
+                option_2.innerText = 'Programming'
+                option_3.innerText = 'Standard Task'
+                option_4.innerText = 'Other'
+                option_5.innerText = 'Homeworks or assignments'
+                option_1.value = 'Web Development'
+                option_2.value = 'Programming'
+                option_3.value = 'Standard'
+                option_4.value = 'Other'
+                option_5.value = 'Academic'
+                default_option_lang.innerText = 'Edit Development Language *'
+                default_option_lang.selected = true
+                default_option_lang.classList.add('text-muted')
+                option_1_lang.innerText = 'Python'
+                option_2_lang.innerText = 'Javascript'
+                option_3_lang.innerText = 'C'
+                option_4_lang.innerText = 'C++'
+                option_5_lang.innerText = 'C#' 
+                option_6_lang.innerText = 'None'
+                option_7_lang.innerText = 'Other'
+                option_1_lang.value = 'Python'
+                option_2_lang.value = 'Javascript'
+                option_3_lang.value = 'C'
+                option_4_lang.value = 'C++'
+                option_5_lang.value = 'C#' 
+                option_6_lang.value = 'None'
+                option_7_lang.value = 'Other'
+                // Option Customizations End
+
+                // Select box Customizations
+                main_select_box.name = 'category'
+                lang_select_box.name = 'language'
+                main_select_box.classList.add('form-select', 'mb-3', 'mt-3')
+                lang_select_box.classList.add('form-select', 'mb-3', 'mt-3')
+                main_select_box.appendChild(default_option)
+                main_select_box.appendChild(option_1)
+                main_select_box.appendChild(option_2)
+                main_select_box.appendChild(option_5)
+                main_select_box.appendChild(option_3)
+                main_select_box.appendChild(option_4)  
+
+                lang_select_box.appendChild(default_option_lang)
+                lang_select_box.appendChild(option_1_lang)
+                lang_select_box.appendChild(option_2_lang)
+                lang_select_box.appendChild(option_3_lang)
+                lang_select_box.appendChild(option_4_lang)
+                lang_select_box.appendChild(option_5_lang)
+                lang_select_box.appendChild(option_6_lang)
+                lang_select_box.appendChild(option_7_lang)
+                // select box customizations end
+                // Miscellaneous
+                const main_div = document.createElement('div')
+                const submit_button = document.createElement('button')
+                id_input_box.name = 'id-input'
+                id_input_box.placeholder = 'Enter ID'
+                id_input_box.type = 'number'
+                id_input_box.required = true
+                id_input_box.classList.add('form-control', 'mb-3', 'mt-3')
+                submit_button.classList.add('btn', 'btn-primary')
+                submit_button.type = 'submit'
+                submit_button.innerText = 'Submit'
+                main_div.name = 'main-input-div'
+                main_div.appendChild(id_input_box)
+                main_div.appendChild(main_select_box)
+                main_div.appendChild(lang_select_box)
+                main_div.appendChild(submit_button)
+                main_shit.appendChild(main_div)
+
+
+            }
+            else if(select_box.value === 'd'){
+                const main_shit = document.getElementById('main-shit')
+                main_shit.innerHTML = ''
+                const main_div = document.createElement('div')
+                const input_desc = document.createElement('span')
+                const submit_button = document.createElement('button')
+                const id_input = document.createElement('input')
+                const time_input = document.createElement('input')
+                const date_input = document.createElement('input')
+                main_div.classList.add('input-group', 'mb-3', 'mt-3')
+                main_div.name = 'main-input-div'
+                submit_button.classList.add('btn', 'btn-primary')
+                submit_button.innerText = 'Submit'
+                submit_button.type = 'submit'
+                input_desc.classList.add('input-group-text')
+                input_desc.id = 'inputGroup-sizing-default'
+                input_desc.textContent = 'Edit'
+                time_input.name = 'time-edit'
+                time_input.type = 'time'
+                time_input.placeholder = 'New Time'
+                time_input.classList.add('form-control')
+                id_input.name = 'id-input'
+                id_input.type = 'number'
+                id_input.placeholder = 'Enter ID'
+                id_input.required = true
+                id_input.classList.add('form-control')
+                date_input.name = 'date-edit'
+                date_input.type = 'date'
+                date_input.placeholder = 'New Date'
+                date_input.classList.add('form-control')
+                main_div.appendChild(input_desc)
+                main_div.appendChild(id_input)
+                main_div.appendChild(time_input)
+                main_div.appendChild(date_input)
+                main_div.appendChild(submit_button)
+                main_shit.appendChild(main_div)
+                
+                
+            }
+            else {
+                const main_shit = document.getElementById('main-shit')
+                main_shit.innerHTML = ''
+            }
+
+        })
+        home_link.classList.replace('link-secondary', 'link-dark')
+        task_link.classList.replace('link-dark', 'link-secondary')
+        const option = {
+            animation: true,
+            delay: 2500,
+        }
+        // {% if messages %}
+        // {% for message in messages %}
+        // {% endfor %}
+        const toastElement = document.getElementById('SuperToasty')
+        const newToastElement = new bootstrap.Toast(toastElement, option)
+        newToastElement.show()
+
+
+        // {% endif %}
+
+
+
+
+
+        
+    </script>
+</body>
+</html>

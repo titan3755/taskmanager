@@ -1,0 +1,144 @@
+{% load avatar_tags %}{% load static %}
+
+
+<nav class="sticky-top p-3 border-bottom bg-light header-main shadow p-3 bg-body rounded">
+    <div class="container-fluid">
+    <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+        <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-dark text-decoration-none me-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-card-checklist" viewBox="0 0 16 16">
+                <path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h13zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z"/>
+                <path d="M7 5.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm-1.496-.854a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0zM7 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm-1.496-.854a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0z"/>
+            </svg>
+        </a>
+
+        <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+        <li><a href="/" class="nav-link px-2 link-secondary" id="home-link">Overview</a></li>
+        {% if user.is_authenticated %}
+        <li><a href="/dashboard" class="nav-link px-2 link-dark" id="dashboard-link">Dashboard</a></li>
+        <li><a href="/task" class="nav-link px-2 link-dark" id="task-link">Tasks</a></li>
+        {% else %}
+        <li><a href="" class="nav-link px-2 link-dark" data-bs-toggle="modal" data-bs-target="#staticBackdrop2">Dashboard</a></li>
+        {% endif %}
+        <li><a href="/signup" class="nav-link px-2 link-dark">Sign Up</a></li>
+        <li><a href="/login" class="nav-link px-2 link-dark">Login</a></li>
+        </ul>
+
+    <form method="POST" action="/finditem/" class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3">{% csrf_token %}
+
+        <div class="input-group">
+            <input name="search_bar" type="search" class="form-control" placeholder="Search by ID" aria-label="Recipient's username" aria-describedby="button-addon2">      
+            <button class="btn btn-success" type="submit" id="button-addon2"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+            </svg></button>
+        </div>
+
+    </form>
+
+        <div class="dropdown text-end">
+        <a href="" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+            {% if user.is_authenticated %}
+            {% avatar user 32 class="rounded-circle" %}
+            {% else %}
+            <img src="{% static 'mainapp/pic.svg' %}" alt="ina" width="32" height="32" class="rounded-circle">
+            {% endif %}
+        </a>
+        <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser1">
+            {% if user.is_authenticated %}
+            <li><h5 class="dropdown-header">Logged in as
+                <b>{{request.user.username}}</b>
+            </h5></li>
+            <li><a class="dropdown-item" href="" data-bs-toggle="modal" data-bs-target="#settings-modal">Settings</a></li>
+            <li><a class="dropdown-item" href="" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Profile</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="/logout">Sign out</a></li>
+            {% else %}
+            <li><a class="dropdown-item disabled" href="#">Login to view settings</a></li>
+            {% endif %}
+        </ul>
+        </div>
+    </div>
+    </div>
+</nav>
+
+<!-- Modal Boxes -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Profile Information</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <ul class="list-group">
+
+                <li class="list-group-item active" aria-current="true">Username</li>
+                <li class="list-group-item">{{request.user.username}}</li>
+                <br>
+                <li class="list-group-item active">Password</li>
+                <li class="list-group-item">PBKDF2 SHA 256 bit Encrypted password</li>
+                <br>
+                <li class="list-group-item active">Email</li>
+                <li class="list-group-item">{{request.user.email}}</li>
+                <br>
+                <p class="text-muted text-dark text-small">This website uses avatars from your Gravatar profile. So to use your custom avatar, provide a valid email address during signup and register a Gravatar account with the same email address. You can also provide an email address by editing your profile.</p>
+            </ul>
+        </div>
+        <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+        <a href="https://wordpress.com/log-in" target="_blank" class="btn btn-info">Change Gravatar</a>
+        <a class="btn btn-warning" href="/editprofile">Edit</a>
+        </div>
+    </div>
+    </div>
+</div>
+<div class="modal fade" id="staticBackdrop2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Sign Up and Login</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <p class="fs-5">Create an account and login to view the Task Dashboard</p>
+        </div>
+        <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Ok</button>
+        </div>
+    </div>
+    </div>
+</div>
+<div class="modal fade" id="settings-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">User Settings</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <div class="form-check form-switch">
+            <label class="form-check-label" for="flexSwitchCheckDefault">Enable for DarkMode! <small>(Experimental)</small></label>
+            <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">  
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+    </div>
+    </div>
+</div>
+</div>
+<script>
+    checkbox = document.getElementById('flexSwitchCheckDefault')
+    searchbar = document.getElementById('search-bar')
+    search_div = document.getElementById('main-search-div')
+    checkbox.addEventListener('change', () => {
+        if (checkbox.checked == true) {
+            document.body.classList.add('bg-dark', 'text-white')
+        }
+        else {
+            document.body.classList.remove('bg-dark', 'text-white')
+        }
+
+    })
+
+</script>
+

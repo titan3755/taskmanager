@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <title>{{title}}</title>
+</head>
+<body class="d-flex flex-column h-100">
+    {% include 'mainapp/navbar.html' %}
+    <div class="container-fluid">
+        {% if messages %}
+        <div class="row">
+        <div class="alert alert-success text-center" role="alert">
+            {% for message in messages %}
+            <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+        </div>
+        {% endif %}
+        <div class="row">
+            <div class="col-md-6 mt-3 mb-3">
+                <div class="h-100 p-5 border border-dark text-dark bg-light rounded-3">
+                    <h2>Edit Profile</h2>
+                    <ul class="list-group mb-3 mt-3">
+                        <li class="list-group-item active">Current Profile Information</li>
+                        <li class="list-group-item"><b>Username:</b> {{request.user.username}}</li>
+                        <li class="list-group-item"><b>Email:</b> {{request.user.email}}</li>
+                    </ul>
+                    <a class="btn btn-success" href="https://wordpress.com/start">Change Gravatar</a>
+                </div>
+            </div>
+            <div class="col-md-6 mt-3 mb-3">
+                <div class="h-100 p-5 border border-dark text-dark bg-light rounded-3">
+                    <h2>Edit Inputs</h2>
+                    <p>Use the following inputs to edit your profile. You can only change the username and the email.</p>
+                    <form action="." method="POST">{% csrf_token %}
+
+                        <div class="form-floating mb-3">
+                            {{form.username}}
+                            <label for="floatingInput">Username</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            {{form.email}}
+                            <label for="floatingInput">Email</label>
+                        </div>
+                    <button class="btn btn-primary" type="submit">Edit Profile</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% include 'mainapp/footer.html' %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+    <script>
+        const home_link = document.getElementById('home-link')
+        home_link.classList.replace('link-secondary', 'link-dark')
+        const main = document.getElementsByTagName('input')
+
+
+        main[4].className = 'form-control'
+        main[5].className = 'form-control'
+        
+
+
+        main[4].id = 'floatingText'
+        main[5].id = 'floatingEmail'
+
+
+
+        main[4].type = 'text'
+        main[5].type = 'email'
+    </script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <title>{{title}}</title>
+</head>
+<body>
+    <div class="container col-xl-10 col-xxl-8 px-4 py-5">
+        <div class="row align-items-center g-lg-5 py-5">
+        <div class="col-lg-7 text-center text-lg-start">
+            <h3 class="display-5 fw-bold lh-1 mb-3">Sign up for DevToDo</h3>
+            <p class="col-lg-10 fs-4">Create an account and then login to view the DevToDo dashboard and access more pages.</p>
+        </div>
+        <div class="col-md-10 mx-auto col-lg-5">
+            {% if form.errors %}
+            <div class="alert alert-danger" role="alert">
+                {% if form.email.errors %}
+                {{form.email.errors}}
+                {% elif form.username.errors %}
+                {{form.username.errors}}
+                {% elif form.password1.errors %}
+                {{form.password1.errors}}
+                {% elif form.password2.errors %}
+                {{form.password2.errors}}
+                {% endif %}
+            </div>
+            {% endif %}
+            <form method="POST" action="." class="p-4 p-md-5 border rounded-3 bg-light">{% csrf_token %}
+
+            <div class="form-floating mb-3">
+                {{form.email}}
+                <label for="floatingInput">Email address</label>
+            </div>
+            <div class="form-floating mb-3">
+                {{form.username}}
+                <label for="floatingInput">Username</label>
+            </div>
+            <div class="form-floating mb-3">
+                {{form.password1}}
+                <label for="floatingPassword">Password</label>
+            </div>
+            <div class="form-floating mb-3">
+                {{form.password2}}
+                <label for="floatingPassword">Password Confirm</label>
+            </div>
+            <button class="w-100 btn btn-lg btn-primary" type="submit">Sign up</button>
+            <hr class="my-4">
+            <small class="text-muted">By clicking Sign up, you agree to the terms of use and have read the Privacy Policy. </br></br><i>Already have an account?      </i><a class="link-primary" href="/login">Login</a></small>
+            </div>    
+        </form>
+        </div>
+        </div>
+    </div>
+    
+    <script>
+        const main = document.getElementsByTagName('input')
+        main[1].className = 'form-control'
+        main[2].className = 'form-control'
+        main[3].className = 'form-control'
+        main[4].className = 'form-control'
+        main[1].id = 'floatingInput'
+        main[2].id = 'floatingInput'
+        main[3].id = 'floatingPassword'
+        main[4].id = 'floatingPassword'
+        main[1].type = 'email'
+        main[2].type = 'text'
+        main[3].type = 'password'
+        main[4].type = 'password'
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+</body>
+</html>
