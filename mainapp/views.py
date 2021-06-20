@@ -10,10 +10,11 @@ from .models import Todo
 
 # Create your views here.
 def home(request, *args, **kwargs):
-    if request.user.email:
-        email = request.user.email
-    else:
-        email = 'example@gmail.com'
+    if request.user.is_authenticated():
+        if request.user.email:
+            email = request.user.email
+        else:
+            email = 'example@gmail.com'
     g = Gravatar(email)
     gravatar_url = g.get_image()
     context = {'title': 'Home', 'avatar': gravatar_url}
